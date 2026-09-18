@@ -1,0 +1,886 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Custom PC Configurator</title>
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: #0b1329;
+      color: #f8fafc;
+      margin: 0;
+      padding: 24px 16px;
+      -webkit-font-smoothing: antialiased;
+    }
+    .container { 
+      max-width: 1120px; 
+      margin: 0 auto; 
+    }
+    h1 { 
+      font-size: clamp(22px, 5vw, 28px); 
+      margin-bottom: 6px; 
+      font-weight: 700; 
+    }
+    p.subtitle { 
+      color: #94a3b8; 
+      margin-top: 0; 
+      margin-bottom: 24px; 
+      font-size: clamp(13px, 3.5vw, 15px); 
+      line-height: 1.4;
+    }
+    .noscript-warning {
+      background: #7f1d1d;
+      border: 1px solid #ef4444;
+      color: #fee2e2;
+      padding: 14px 18px;
+      border-radius: 10px;
+      margin-bottom: 20px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .tree-grid { 
+      display: flex; 
+      flex-direction: column; 
+      gap: 14px; 
+      margin-bottom: 28px; 
+    }
+    .tree-row {
+      display: grid;
+      grid-template-columns: 160px 1fr;
+      align-items: start;
+      background: #151e36;
+      border: 1px solid #233154;
+      border-radius: 12px;
+      padding: 16px 18px;
+      gap: 16px;
+      animation: fadeIn 0.2s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .row-title {
+      font-weight: 700;
+      font-size: 13px;
+      color: #38bdf8;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding-top: 6px;
+    }
+    .options-group { 
+      display: flex; 
+      flex-wrap: wrap; 
+      gap: 12px; 
+    }
+    
+    .btn-opt {
+      background: #0e172e;
+      color: #cbd5e1;
+      border: 1.5px solid #2d3e63;
+      padding: 12px 18px;
+      border-radius: 10px;
+      font-size: 14px;
+      cursor: pointer;
+      touch-action: manipulation;
+      transition: all 0.15s ease;
+      font-weight: 600;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      text-align: left;
+      flex: 1 1 240px;
+    }
+    .btn-opt:hover {
+      border-color: #38bdf8;
+      background: #1e293b;
+      color: #fff;
+    }
+    .btn-opt.active {
+      background: #172554;
+      border-color: #38bdf8;
+      color: #ffffff;
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.4);
+    }
+    .btn-subtext {
+      font-size: 11.5px;
+      color: #94a3b8;
+      font-weight: 400;
+      line-height: 1.35;
+    }
+    .btn-opt.active .btn-subtext {
+      color: #7dd3fc;
+    }
+
+    .card-opt {
+      background: #0e172e;
+      border: 1.5px solid #2d3e63;
+      border-radius: 10px;
+      flex: 1 1 calc(50% - 12px);
+      max-width: 250px;
+      min-width: 200px;
+      padding: 12px;
+      cursor: pointer;
+      touch-action: manipulation;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+    .card-opt:hover { 
+      border-color: #38bdf8; 
+      transform: translateY(-2px); 
+    }
+    .card-opt.active {
+      border-color: #38bdf8;
+      background: #172554;
+      box-shadow: 0 0 14px rgba(56, 189, 248, 0.4);
+    }
+    .card-img-wrap {
+      width: 100%;
+      height: 120px;
+      background: #060b17;
+      border: 1px solid #1e293b;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      overflow: hidden;
+    }
+    .card-img { 
+      max-width: 100%; 
+      max-height: 100%; 
+      object-fit: contain; 
+    }
+    .card-title {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: #f1f5f9;
+      margin-bottom: 4px;
+      line-height: 1.3;
+    }
+    .card-spec-badge {
+      font-size: 10.5px;
+      font-weight: 500;
+      color: #94a3b8;
+      background: #1e293b;
+      border: 1px solid #334155;
+      padding: 4px 6px;
+      border-radius: 4px;
+      margin-bottom: 8px;
+      line-height: 1.35;
+      display: inline-block;
+      width: 100%;
+    }
+    .card-price {
+      font-size: 13px;
+      font-weight: 700;
+      color: #34d399;
+      background: rgba(52, 211, 153, 0.12);
+      padding: 3px 8px;
+      border-radius: 4px;
+      margin-top: auto;
+    }
+
+    .manifest-box {
+      background: #111827;
+      border: 1px solid #28354f;
+      border-radius: 12px;
+      padding: 20px;
+    }
+    .manifest-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 1px solid #28354f;
+      padding-bottom: 12px;
+      gap: 12px;
+    }
+    .manifest-header h3 { 
+      margin: 0; 
+      font-size: 18px; 
+      color: #f3f4f6; 
+    }
+    .total-container { text-align: right; }
+    .subtotal-label { font-size: 12px; color: #94a3b8; margin-bottom: 2px; }
+    .total-price { font-size: 22px; font-weight: 700; color: #34d399; }
+    .manifest-list { list-style: none; padding: 0; margin: 14px 0; }
+    .manifest-list li {
+      padding: 9px 4px;
+      border-bottom: 1px solid #1f293d;
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      font-size: 13.5px;
+    }
+    .manifest-list li strong { color: #38bdf8; min-width: 110px; }
+    .manifest-val { text-align: right; }
+    .manifest-part-price { color: #94a3b8; font-size: 12.5px; margin-left: 4px; }
+    .actions { display: flex; gap: 10px; margin-top: 16px; flex-wrap: wrap; }
+    .btn-action {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      touch-action: manipulation;
+      font-weight: 600;
+      font-size: 13.5px;
+      flex: 1 1 140px;
+    }
+    .btn-copy { background: #10b981; color: white; }
+    .btn-copy:hover { background: #059669; }
+    .btn-reset { background: #ef4444; color: white; }
+    .btn-reset:hover { background: #dc2626; }
+
+    @media (max-width: 768px) {
+      body { padding: 16px 12px; }
+      .tree-row {
+        grid-template-columns: 1fr;
+        padding: 14px;
+        gap: 10px;
+      }
+      .row-title {
+        padding-top: 0;
+        border-bottom: 1px solid #1e293b;
+        padding-bottom: 6px;
+      }
+      .card-opt {
+        min-width: 140px;
+        max-width: 100%;
+        flex: 1 1 calc(50% - 6px);
+        padding: 10px 8px;
+      }
+      .card-img-wrap { height: 100px; }
+      .manifest-list li {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 2px;
+      }
+      .manifest-val { text-align: left; }
+    }
+
+    @media (max-width: 440px) {
+      .card-opt {
+        flex: 1 1 100%;
+        max-width: 100%;
+      }
+      .card-img-wrap { height: 130px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Custom PC Configurator</h1>
+  <p class="subtitle">Select your architecture to begin: BTF (Cable-Free GPU) or Standard Back-Connect.</p>
+
+  <noscript>
+    <div class="noscript-warning">
+      <strong>JavaScript is disabled:</strong> iOS Quick Look preview in the Files app does not execute scripts. Tap <strong>Share</strong> and choose <strong>Chrome</strong> or open via a web host/sandbox app.
+    </div>
+  </noscript>
+
+  <div class="tree-grid" id="tree-container"></div>
+
+  <div class="manifest-box">
+    <div class="manifest-header">
+      <div><h3>Build Manifest</h3></div>
+      <div class="total-container">
+        <div class="subtotal-label">Hardware Total:</div>
+        <div class="total-price" id="total-price-display">$0.00</div>
+      </div>
+    </div>
+    <ul class="manifest-list" id="manifest-list">
+      <li style="color: #64748b;"><em>No components selected yet.</em></li>
+    </ul>
+    <div class="actions">
+      <button class="btn-action btn-copy" onclick="copyBuild()">📋 Copy Spec Sheet</button>
+      <button class="btn-action btn-reset" onclick="resetAll()">↺ Reset</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  const state = {
+    architecture: null,
+    case: null,
+    motherboard: null,
+    cpu: null,
+    gpu: null,
+    ram: null,
+    storage: null,
+    psu: null,
+    cooler: null
+  };
+
+  const stepOrder = ['architecture', 'case', 'motherboard', 'cpu', 'gpu', 'ram', 'storage', 'psu', 'cooler'];
+
+  function formatPriceTag(item) {
+    if (typeof item === 'object' && item !== null && typeof item.price === 'number') {
+      const prefix = item.isEstimate ? '~' : '';
+      return `${prefix}$${item.price.toFixed(2)}`;
+    }
+    return '';
+  }
+
+  const casesData = [
+    {
+      id: 'asus_a31',
+      name: 'ASUS A31',
+      supportedFormFactors: ['ATX', 'mATX'],
+      badge: 'Micro-ATX/ATX · Mesh Airflow · Black or White',
+      badgeBTF: 'Micro-ATX/ATX · Mesh Airflow · White',
+      price: 65.00,
+      image: 'https://m.media-amazon.com/images/I/81JM0sNV8iL.jpg',
+      imageBTF: 'https://c1.neweggimages.com/productimage/nb640/11-173-078-17.png'
+    },
+    {
+      id: 'nzxt_h6',
+      name: 'NZXT H6 (2026 Refresh)',
+      supportedFormFactors: ['ATX', 'mATX'],
+      badge: 'Dual-Chamber · Angled Intakes · Black or White',
+      badgeBTF: 'Dual-Chamber · Angled Intakes · White',
+      price: 100.00,
+      image: 'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/8426e8d7-c95e-4f60-85fd-c95747e3ca23.png;maxHeight=1920;maxWidth=900?format=webp'
+    },
+    {
+      id: 'nzxt_h9',
+      name: 'NZXT H9 Flow (Back-Connect Rev)',
+      supportedFormFactors: ['ATX', 'mATX'],
+      badge: 'Dual-Chamber Panoramic · 3x 360mm Rads · Black or White',
+      badgeBTF: 'Dual-Chamber Panoramic · 3x 360mm Rads · White',
+      price: 100.00,
+      image: 'https://m.media-amazon.com/images/I/71GUYZWzSyL._AC_SY300_SX300_QL70_FMwebp_.jpg'
+    },
+    {
+      id: 'gamerx_wing',
+      name: 'GamerX Wing LCD Display',
+      supportedFormFactors: ['mATX'],
+      badge: 'Micro-ATX Only · Integrated LCD Screen · Black',
+      price: 200.00,
+      image: 'https://manuals.plus/ae/1005008799478947/images/S226b9f371edd4104bb89a0543c45e4eeJ.jpg'
+    }
+  ];
+
+  const allMotherboards = [
+    {
+      id: 'b850_btf_new',
+      name: 'ASUS TUF B850-BTF WiFi W (New)',
+      type: 'BTF',
+      formFactor: 'ATX',
+      socket: 'AM5',
+      badge: 'ATX · AM5 · White/Silver · BTF GC-HPWR Slot',
+      price: 290.00,
+      image: 'https://productimages.microcenter.com/702724_940361_01_front_comping.jpg'
+    },
+    {
+      id: 'b850_btf_used',
+      name: 'ASUS TUF B850-BTF WiFi W (Used)',
+      type: 'BTF',
+      formFactor: 'ATX',
+      socket: 'AM5',
+      badge: 'ATX · AM5 · White/Silver · BTF GC-HPWR Slot',
+      price: 180.00,
+      image: 'https://productimages.microcenter.com/702724_940361_01_front_comping.jpg'
+    },
+    {
+      id: 'b760_btf',
+      name: 'ASUS TUF B760-BTF WiFi',
+      type: 'BTF',
+      formFactor: 'ATX',
+      socket: 'LGA1700',
+      badge: 'ATX · LGA1700 · White/Silver · BTF GC-HPWR Slot',
+      price: 300.00,
+      image: 'https://i.ebayimg.com/images/g/z5kAAOSw1KNlrOwj/s-l1200.jpg'
+    },
+    {
+      id: 'b850_stealth',
+      name: 'Gigabyte B850 Aorus Stealth Ice',
+      type: 'Standard',
+      formFactor: 'ATX',
+      socket: 'AM5',
+      badge: 'ATX · AM5 · Ice White Full Armor · Back-Connect',
+      price: 290.00,
+      image: 'https://c1.neweggimages.com/productimage/nb1280/13-145-581-02.jpg'
+    },
+    {
+      id: 'b850_pz',
+      name: 'MSI B850 Gaming Plus WiFi PZ',
+      type: 'Standard',
+      formFactor: 'ATX',
+      socket: 'AM5',
+      badge: 'ATX · AM5 · Silver-White Heatsinks · Back-Connect',
+      price: 230.00,
+      image: 'https://i5.walmartimages.com/seo/MSI-B850-GAMING-PLUS-WIFI-PZ-AM5-AMD-B850-PCIe-5-0-USB-10-5Gbps-Type-A-C-Wi-Fi-7-ATX-Motherboard_c86d0a8a-6d0e-48de-a7fe-a7870cfebadc.13a92e3cf52b6112018f93e2d1569613.jpeg'
+    },
+    {
+      id: 'b650m_pz',
+      name: 'MSI B650M Project Zero',
+      type: 'Standard',
+      formFactor: 'mATX',
+      socket: 'AM5',
+      badge: 'Micro-ATX · AM5 · Silver/White · Back-Connect',
+      price: 150.00,
+      image: 'https://storage-asset.msi.com/global/picture/image/feature/mb/B650M/PROJECT-ZERO/modelblock-mb.png'
+    }
+  ];
+
+  const allCPUs = {
+    AM5: [
+      {
+        id: 'r9_9950x',
+        name: 'AMD Ryzen 9 9950X',
+        badge: '16 Cores / 32 Threads · Up to 5.7 GHz · Zen 5',
+        price: 460.00,
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSM9n9ooYHyYFdEeGikM3rWhDldRVyH-djN6NICk54zsrIQaUMik7O2cU4&s=10'
+      },
+      {
+        id: 'r9_9900x',
+        name: 'AMD Ryzen 9 9900X',
+        badge: '12 Cores / 24 Threads · Up to 5.6 GHz · Zen 5',
+        price: 360.00,
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSbgcOeqYMhLxpEGT2pT061DX1dgQ6Zl0KwTRTbDiGpe_iXUftWuNxtRx0&s=10'
+      },
+      {
+        id: 'r9_7950x',
+        name: 'AMD Ryzen 9 7950X',
+        badge: '16 Cores / 32 Threads · Up to 5.7 GHz · Zen 4',
+        price: 260.00,
+        image: 'https://productimages.microcenter.com/674519_643874_02_front_comping.jpg'
+      }
+    ],
+    LGA1700: [
+      {
+        id: 'i9_14900k',
+        name: 'Intel Core i9-14900K',
+        badge: '24 Cores (8P+16E) / 32T · Up to 6.0 GHz',
+        price: 470.00,
+        image: 'https://encrypted-tbn2.gstatic.com/images?q=tbn:ANd9GcRt35tEh1QnvuifcfBHR9uW40fwrWPQ37T_7I0zuPHAosZKW81y'
+      },
+      {
+        id: 'i9_13900k',
+        name: 'Intel Core i9-13900K',
+        badge: '24 Cores (8P+16E) / 32T · Up to 5.8 GHz',
+        price: 350.00,
+        image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDWGBYW6QZpdN7kQE7EGrf7-lFS2fFW3bVpUNkdq_35q6_vOtrSL2RGoDR&s=10'
+      }
+    ]
+  };
+
+  const btfGPUs = [
+    {
+      id: 'rtx_4070ti_super_btf',
+      name: 'RTX 4070 Ti Super BTF',
+      badge: '16GB GDDR6X · Cable-Free GC-HPWR · White',
+      price: 1000.00,
+      image: 'https://dlcdnwebimgs.asus.com/gain/cea3d1a5-6d88-4169-984f-33405c76bc2f/'
+    },
+    {
+      id: 'rtx_5070ti_btf',
+      name: 'RTX 5070 Ti BTF',
+      badge: '16GB Next-Gen · Cable-Free GC-HPWR · White',
+      price: 1700.00,
+      image: 'https://dlcdnwebimgs.asus.com/gain/cea3d1a5-6d88-4169-984f-33405c76bc2f/'
+    }
+  ];
+
+  const standardGPUs = [
+    {
+      id: 'rtx_4070ti_super_used',
+      name: 'RTX 4070 Ti Super (Used)',
+      badge: '16GB GDDR6X · Standard PCIe Cable · Black',
+      price: 800.00,
+      image: 'https://storage-asset.msi.com/global/picture/product/product_1709260329e0ce3e717962d59fcd0147d5352067a8.webp'
+    },
+    {
+      id: 'rtx_5070ti_std',
+      name: 'RTX 5070 Ti',
+      badge: '16GB Next-Gen · Standard PCIe Cable · Black/White',
+      price: 1200.00,
+      image: 'https://c1.neweggimages.com/productimage/nb1280/14-932-771-02.jpg'
+    }
+  ];
+
+  const ramsData = [
+    {
+      id: 'patriot_viper_64gb',
+      name: 'Patriot Viper 64GB (2x32GB) Used',
+      badge: 'DDR5 6000MHz CL30 · Black Heatspreader',
+      price: 700.00,
+      image: 'https://www.bhphotovideo.com/cdn-cgi/image/fit=scale-down,width=500,quality=95/https://www.bhphotovideo.com/images/images500x500/patriot_pvv564g600c36k_viper_venom_ddr5_64gb_1691066739_1773642.jpg'
+    },
+    {
+      id: 'gskill_trident_royal_64gb',
+      name: 'G.Skill Trident Z5 Royal 64GB Used',
+      badge: 'DDR5 6400MHz CL32 · Silver/White Crystal RGB',
+      price: 800.00,
+      image: 'https://productimages.microcenter.com/684517_748848_01_front_comping.jpg'
+    }
+  ];
+
+  const storagesData = [
+    {
+      id: 'crucial_2tb_new',
+      name: 'Crucial M.2 2TB Gen4 SSD (New)',
+      badge: 'PCIe 4.0 x4 · 7,100 MB/s · Brand New Factory Drive',
+      price: 300.00,
+      image: 'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/35cfa584-3591-44fb-a9a6-5d1a8928a209.jpg;maxHeight=1920;maxWidth=900?format=webp'
+    },
+    {
+      id: 'kingspec_2tb_new',
+      name: 'KingSpec M.2 2TB Gen4 NVMe SSD (New)',
+      badge: 'PCIe 4.0 x4 · 7,400 MB/s · Brand New Factory Drive',
+      price: 250.00,
+      image: 'https://c1.neweggimages.com/productimage/nb1280/B1V8S26040205J8S56D.jpg'
+    },
+    {
+      id: 'nvme_2tb_used',
+      name: 'Used 2TB M.2 Gen 4 NVMe SSD',
+      badge: 'PCIe 4.0 x4 · 5,000–7,000 MB/s · Tested Health / High TBW',
+      price: 220.00,
+      isEstimate: true,
+      image: 'https://content.crucial.com/content/dam/crucial/ssd-products/t500/images/product/crucial-t500-ssd-front.psd.transform/medium-png/image.png'
+    }
+  ];
+
+  const psusData = [
+    {
+      id: 'asrock_pg1000g',
+      name: 'ASRock PG-1000G (New)',
+      badge: '1000W · 80+ Gold · ATX 3.0 Modular · Black',
+      price: 100.00,
+      image: 'https://i.ebayimg.com/images/g/LGIAAeSw6qBnxuO2/s-l960.webp'
+    },
+    {
+      id: 'asrock_sl1000g',
+      name: 'ASRock SL-1000G (New)',
+      badge: '1000W · 80+ Gold · ATX 3.0 Modular · Black or White',
+      price: 100.00,
+      image: 'https://i.ebayimg.com/images/g/9eYAAeSwX61qO-Ra/s-l1600.webp'
+    },
+    {
+      id: 'poinwer_850w',
+      name: 'POINWER PW-850W (Used)',
+      badge: '850W · White Chassis · RGB Fan',
+      price: 40.00,
+      image: 'https://m.media-amazon.com/images/I/815XRTVJXfL._AC_SX466_.jpg'
+    },
+    {
+      id: 'evga_1200_p2',
+      name: 'EVGA SuperNOVA 1200 P2 (Used)',
+      badge: '1200W · 80+ Platinum · Modular · Black',
+      price: 80.00,
+      image: 'https://m.media-amazon.com/images/I/71nGSWfWVVL._AC_SX466_.jpg'
+    }
+  ];
+
+  const coolersData = [
+    {
+      id: 'aio_standard_no_display',
+      name: 'Fans + 360mm AIO (No Display)',
+      badge: '360mm Radiator · Clean Infinity Mirror ARGB',
+      price: 80.00,
+      isEstimate: true,
+      image: 'https://static0.thegamerimages.com/wordpress/wp-content/uploads/2024/01/fi_aio.jpg'
+    },
+    {
+      id: 'aio_metrics_display',
+      name: 'Fans + 360mm AIO (Metrics Display)',
+      badge: '360mm Radiator · Live Digital Temp & RPM Readout',
+      price: 120.00,
+      isEstimate: true,
+      image: 'https://pegasus.hk/cdn-cgi/imagedelivery/gTpMHUmncPYPe7GoYL67Ag/f85f25c4-ce81-41b0-5656-a9fb87e1dd00/public'
+    },
+    {
+      id: 'aio_custom_lcd',
+      name: 'Fans + 360mm AIO (Custom LCD)',
+      badge: '360mm Radiator · Full IPS LCD Screen (GIFs/Video)',
+      price: 200.00,
+      isEstimate: true,
+      image: 'https://ae-pic-a1.aliexpress-media.com/kf/S40168a65e9a043deaf3c83e43b77b80el.jpg'
+    }
+  ];
+
+  function isItemSelected(stepKey, opt) {
+    const current = state[stepKey];
+    if (!current) return false;
+    if (typeof current === 'string') return current === opt.id;
+    if (current.id && opt.id) return current.id === opt.id;
+    return current.name === opt.name;
+  }
+
+  function selectStep(step, val) {
+    const current = state[step];
+    const isSame = typeof val === 'string'
+      ? current === val
+      : (current && (current.id === val.id || current.name === val.name));
+
+    if (isSame) return;
+
+    state[step] = val;
+    const idx = stepOrder.indexOf(step);
+    for (let i = idx + 1; i < stepOrder.length; i++) {
+      state[stepOrder[i]] = null;
+    }
+
+    render();
+  }
+
+  function renderArchitectureRow() {
+    const row = document.createElement('div');
+    row.className = 'tree-row';
+
+    const titleEl = document.createElement('div');
+    titleEl.className = 'row-title';
+    titleEl.textContent = 'Architecture';
+    row.appendChild(titleEl);
+
+    const optsEl = document.createElement('div');
+    optsEl.className = 'options-group';
+
+    const archOptions = [
+      {
+        id: 'BTF',
+        name: 'BTF Architecture',
+        subtext: '100% Cable-Free Front · ASUS BTF Motherboard + BTF GPU'
+      },
+      {
+        id: 'Standard',
+        name: 'Standard Back-Connect',
+        subtext: 'Clean Rear Headers (Project Zero / Stealth) · Standard PCIe GPU'
+      }
+    ];
+
+    archOptions.forEach(opt => {
+      const isSelected = state.architecture === opt.id;
+      const btn = document.createElement('button');
+      btn.className = `btn-opt ${isSelected ? 'active' : ''}`;
+      btn.innerHTML = `
+        <span>${opt.name}</span>
+        <span class="btn-subtext">${opt.subtext}</span>
+      `;
+      btn.onclick = () => selectStep('architecture', opt.id);
+      optsEl.appendChild(btn);
+    });
+
+    row.appendChild(optsEl);
+    return row;
+  }
+
+  function renderRow(label, stepKey, options) {
+    const row = document.createElement('div');
+    row.className = 'tree-row';
+
+    const titleEl = document.createElement('div');
+    titleEl.className = 'row-title';
+    titleEl.textContent = label;
+    row.appendChild(titleEl);
+
+    const optsEl = document.createElement('div');
+    optsEl.className = 'options-group';
+
+    options.forEach(opt => {
+      const isSelected = isItemSelected(stepKey, opt);
+      const card = document.createElement('div');
+      card.className = `card-opt ${isSelected ? 'active' : ''}`;
+
+      const fallback = 'https://placehold.co/220x125/1e293b/94a3b8?text=' + encodeURIComponent(opt.name.split(' ')[0]);
+      const imgBlock = `<img src="${opt.image}" class="card-img" alt="${opt.name}" loading="lazy" onerror="this.onerror=null;this.src='${fallback}';" />`;
+
+      const badgeHtml = opt.badge 
+        ? `<div class="card-spec-badge">${opt.badge}</div>` 
+        : '';
+
+      const formattedPrice = formatPriceTag(opt);
+
+      card.innerHTML = `
+        <div class="card-img-wrap">${imgBlock}</div>
+        <div class="card-title">${opt.name}</div>
+        ${badgeHtml}
+        <div class="card-price">${formattedPrice}</div>
+      `;
+      card.onclick = () => selectStep(stepKey, opt);
+      optsEl.appendChild(card);
+    });
+
+    row.appendChild(optsEl);
+    return row;
+  }
+
+  function render() {
+    const container = document.getElementById('tree-container');
+    if (!container) return;
+    container.innerHTML = '';
+
+    container.appendChild(renderArchitectureRow());
+
+    if (state.architecture) {
+      let validCases = [];
+      if (state.architecture === 'BTF') {
+        validCases = casesData
+          .filter(c => c.supportedFormFactors.includes('ATX'))
+          .map(c => ({
+            ...c,
+            badge: c.badgeBTF || c.badge.replace('Black or White', 'White'),
+            image: (c.id === 'asus_a31' && c.imageBTF) ? c.imageBTF : c.image
+          }));
+      } else {
+        validCases = casesData;
+      }
+      container.appendChild(renderRow('PC Case', 'case', validCases));
+    }
+
+    if (state.case) {
+      const validMobos = allMotherboards.filter(m => 
+        m.type === state.architecture && 
+        state.case.supportedFormFactors.includes(m.formFactor)
+      );
+      container.appendChild(renderRow('Motherboard', 'motherboard', validMobos));
+    }
+
+    if (state.motherboard) {
+      const validCPUs = allCPUs[state.motherboard.socket] || [];
+      const label = state.motherboard.socket === 'AM5' ? 'CPU (AM5)' : 'CPU (LGA1700)';
+      container.appendChild(renderRow(label, 'cpu', validCPUs));
+    }
+
+    if (state.cpu) {
+      const validGPUs = state.architecture === 'BTF' ? btfGPUs : standardGPUs;
+      const label = state.architecture === 'BTF' ? 'Graphics Card (BTF Slot)' : 'Graphics Card (Standard PCIe)';
+      container.appendChild(renderRow(label, 'gpu', validGPUs));
+    }
+
+    if (state.gpu) {
+      container.appendChild(renderRow('Memory (RAM)', 'ram', ramsData));
+    }
+
+    if (state.ram) {
+      container.appendChild(renderRow('Storage (NVMe)', 'storage', storagesData));
+    }
+
+    if (state.storage) {
+      container.appendChild(renderRow('Power Supply', 'psu', psusData));
+    }
+
+    if (state.psu) {
+      container.appendChild(renderRow('Fans & Cooler', 'cooler', coolersData));
+    }
+
+    updateManifest();
+  }
+
+  function updateManifest() {
+    const list = document.getElementById('manifest-list');
+    const totalEl = document.getElementById('total-price-display');
+    if (!list || !totalEl) return;
+    list.innerHTML = '';
+
+    const labels = {
+      architecture: 'Architecture',
+      case: 'PC Case',
+      motherboard: 'Motherboard',
+      cpu: 'Processor (CPU)',
+      gpu: 'Graphics Card (GPU)',
+      ram: 'Memory (RAM)',
+      storage: 'Storage (SSD)',
+      psu: 'Power Supply (PSU)',
+      cooler: 'Fans & AIO Cooler'
+    };
+
+    let total = 0;
+    let count = 0;
+
+    for (const key of stepOrder) {
+      const val = state[key];
+      if (val) {
+        count++;
+        const li = document.createElement('li');
+
+        if (typeof val === 'object' && val !== null) {
+          total += val.price || 0;
+          const badgeText = val.badge ? ` [${val.badge}]` : '';
+          const priceStr = formatPriceTag(val);
+          li.innerHTML = `
+            <strong>${labels[key]}</strong>
+            <span class="manifest-val">${val.name}${badgeText} <span class="manifest-part-price">(${priceStr})</span></span>
+          `;
+        } else {
+          const displayTxt = val === 'BTF' ? 'BTF Architecture (Cable-Free Front)' : 'Standard Back-Connect';
+          li.innerHTML = `<strong>${labels[key]}</strong> <span class="manifest-val">${displayTxt}</span>`;
+        }
+
+        list.appendChild(li);
+      }
+    }
+
+    if (count > 0) {
+      totalEl.textContent = `$${total.toFixed(2)}`;
+    } else {
+      list.innerHTML = '<li style="color: #64748b;"><em>No components selected yet.</em></li>';
+      totalEl.textContent = '$0.00';
+    }
+  }
+
+  window.resetAll = function() {
+    for (const key of stepOrder) state[key] = null;
+    render();
+  };
+
+  window.copyBuild = function() {
+    const lines = [];
+    const labels = {
+      architecture: 'Architecture',
+      case: 'Case',
+      motherboard: 'Motherboard',
+      cpu: 'CPU',
+      gpu: 'GPU',
+      ram: 'RAM',
+      storage: 'Storage',
+      psu: 'Power Supply',
+      cooler: 'Cooling'
+    };
+
+    for (const key of stepOrder) {
+      const val = state[key];
+      if (val) {
+        if (typeof val === 'object' && val !== null) {
+          const badgeText = val.badge ? ` [${val.badge}]` : '';
+          const priceStr = ` (${formatPriceTag(val)})`;
+          lines.push(`${labels[key]}: ${val.name}${badgeText}${priceStr}`);
+        } else {
+          lines.push(`${labels[key]}: ${val}`);
+        }
+      }
+    }
+
+    if (!lines.length) {
+      alert('Please select parts first!');
+      return;
+    }
+
+    lines.push(`Total Hardware Cost: ${document.getElementById('total-price-display').textContent}`);
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(lines.join('\n'))
+        .then(() => alert('Build manifest copied to clipboard!'))
+        .catch(() => alert(lines.join('\n')));
+    } else {
+      alert(lines.join('\n'));
+    }
+  };
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', render);
+  } else {
+    render();
+  }
+})();
+</script>
+</body>
+</html>
