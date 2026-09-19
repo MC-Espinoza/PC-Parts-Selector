@@ -278,7 +278,7 @@
 
 <div class="container">
   <h1>Custom PC Configurator</h1>
-  <p class="subtitle">Select your architecture to begin: BTF (Cable-Free GPU) or Standard Back-Connect.</p>
+  <p class="subtitle">Select your architecture to begin: BTF, Standard Back-Connect, or DP-IN/USB-C Loop.</p>
 
   <noscript>
     <div class="noscript-warning">
@@ -360,6 +360,15 @@
       image: 'https://m.media-amazon.com/images/I/71GUYZWzSyL._AC_SY300_SX300_QL70_FMwebp_.jpg'
     },
     {
+      id: 'zalman_p40_ds',
+      name: 'Zalman P40 DS',
+      supportedFormFactors: ['ATX', 'mATX'],
+      badge: 'ATX/mATX · Dual Tempered Glass Display · Black or White',
+      badgeBTF: 'ATX/mATX · Dual Tempered Glass Display · White',
+      price: 150.00,
+      image: 'https://c1.neweggimages.com/productimage/nb1280/ABW9S25090217WHWZFD.jpg'
+    },
+    {
       id: 'gamerx_wing',
       name: 'GamerX Wing LCD Display',
       supportedFormFactors: ['mATX'],
@@ -429,6 +438,66 @@
       badge: 'Micro-ATX · AM5 · Silver/White · Back-Connect',
       price: 150.00,
       image: 'https://storage-asset.msi.com/global/picture/image/feature/mb/B650M/PROJECT-ZERO/modelblock-mb.png'
+    },
+    {
+      id: 'proart_x870e',
+      name: 'ASUS ProArt X870E-Creator WiFi',
+      type: 'DPIN',
+      formFactor: 'ATX',
+      socket: 'AM5',
+      badge: 'ATX · AM5 · Dual DP-IN · 40Gbps USB4 Type-C',
+      price: 500.00,
+      image: 'https://i5.walmartimages.com/seo/ASUS-ProArt-X870E-CREATOR-WIFI-AMD-AM5-X870E-ATX-Motherboard-PCIe-5-0-x16-slots-full-support-next-gen-GPUs-16-2-2-power-stages-DDR5-dual-USB4-10-Gb-2_2aca1732-8a5b-45fd-8405-bd9b415ad988.ef903c5e3355e1da07f92c74abda1084.jpeg?odnHeight=573&odnWidth=573&odnBg=FFFFFF'
+    },
+    {
+      id: 'proart_b650',
+      name: 'ASUS ProArt B650-Creator',
+      type: 'DPIN',
+      formFactor: 'ATX',
+      socket: 'AM5',
+      badge: 'ATX · AM5 · DP-IN Loop · 10Gbps USB 3.2 Gen 2 Type-C',
+      price: 340.00,
+      image: 'https://m.media-amazon.com/images/S/aplus-media-library-service-media/67424e4f-2bf4-4772-aedb-beb870f7c42a.__CR0,0,300,300_PT0_SX300_V1___.png'
+    },
+    {
+      id: 'b650_aero_g',
+      name: 'Gigabyte B650 AERO G',
+      type: 'DPIN',
+      formFactor: 'ATX',
+      socket: 'AM5',
+      badge: 'ATX · AM5 · VisionLINK DP-IN · 20Gbps Type-C',
+      price: 200.00,
+      image: 'https://c1.neweggimages.com/productimage/nb1280/13-145-410-04.jpg'
+    },
+    {
+      id: 'proart_z890',
+      name: 'ASUS ProArt Z890-Creator WiFi',
+      type: 'DPIN',
+      formFactor: 'ATX',
+      socket: 'LGA1851',
+      badge: 'ATX · LGA1851 · Dual DP-IN · 40Gbps Thunderbolt 4',
+      price: 450.00,
+      image: 'https://c1.neweggimages.com/productimage/nb1280/13-119-699-02.png'
+    },
+    {
+      id: 'z790_aero_g_used',
+      name: 'Gigabyte Z790 AERO G (Used)',
+      type: 'DPIN',
+      formFactor: 'ATX',
+      socket: 'LGA1700',
+      badge: 'ATX · LGA1700 · VisionLINK DP-IN · 20Gbps Type-C',
+      price: 280.00,
+      image: 'https://c1.neweggimages.com/productimage/nb1280/AGBAS2312290QWIV69E.jpg'
+    },
+    {
+      id: 'z790_aorus_pro_x_used',
+      name: 'Gigabyte Z790 Aorus Pro X (Used)',
+      type: 'DPIN',
+      formFactor: 'ATX',
+      socket: 'LGA1700',
+      badge: 'ATX · LGA1700 · DP-IN Loop · 20Gbps Type-C · White Armor',
+      price: 260.00,
+      image: 'https://c1.neweggimages.com/productimage/nb1280/13-145-477-02.jpg'
     }
   ];
 
@@ -470,6 +539,22 @@
         badge: '24 Cores (8P+16E) / 32T · Up to 5.8 GHz',
         price: 350.00,
         image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTDWGBYW6QZpdN7kQE7EGrf7-lFS2fFW3bVpUNkdq_35q6_vOtrSL2RGoDR&s=10'
+      }
+    ],
+    LGA1851: [
+      {
+        id: 'ultra9_285k',
+        name: 'Intel Core Ultra 9 285K',
+        badge: '24 Cores (8P+16E) / 24T · Up to 5.7 GHz · Arrow Lake',
+        price: 550.00,
+        image: 'https://pisces.bbystatic.com/image2/BestBuy_US/images/products/0224860a-6519-429e-b610-38285cc3d33f.jpg;maxHeight=1920;maxWidth=900?format=webp'
+      },
+      {
+        id: 'ultra7_270k',
+        name: 'Intel Core Ultra 7 270K',
+        badge: '20 Cores (8P+12E) / 20T · Up to 5.5 GHz · Arrow Lake Refresh',
+        price: 350.00,
+        image: 'https://c1.neweggimages.com/productimage/nb1280/19-118-628-01.jpg'
       }
     ]
   };
@@ -655,6 +740,11 @@
         id: 'Standard',
         name: 'Standard Back-Connect',
         subtext: 'Clean Rear Headers (Project Zero / Stealth) · Standard PCIe GPU'
+      },
+      {
+        id: 'DPIN',
+        name: 'DP-IN / USB-C Loop',
+        subtext: 'Creator Boards with DP-IN to Route Discrete GPU via USB-C / Thunderbolt'
       }
     ];
 
@@ -731,6 +821,8 @@
             badge: c.badgeBTF || c.badge.replace('Black or White', 'White'),
             image: (c.id === 'asus_a31' && c.imageBTF) ? c.imageBTF : c.image
           }));
+      } else if (state.architecture === 'DPIN') {
+        validCases = casesData.filter(c => c.id !== 'gamerx_wing' && c.supportedFormFactors.includes('ATX'));
       } else {
         validCases = casesData;
       }
@@ -747,7 +839,7 @@
 
     if (state.motherboard) {
       const validCPUs = allCPUs[state.motherboard.socket] || [];
-      const label = state.motherboard.socket === 'AM5' ? 'CPU (AM5)' : 'CPU (LGA1700)';
+      const label = `CPU (${state.motherboard.socket})`;
       container.appendChild(renderRow(label, 'cpu', validCPUs));
     }
 
@@ -812,7 +904,9 @@
             <span class="manifest-val">${val.name}${badgeText} <span class="manifest-part-price">(${priceStr})</span></span>
           `;
         } else {
-          const displayTxt = val === 'BTF' ? 'BTF Architecture (Cable-Free Front)' : 'Standard Back-Connect';
+          let displayTxt = 'Standard Back-Connect';
+          if (val === 'BTF') displayTxt = 'BTF Architecture (Cable-Free Front)';
+          if (val === 'DPIN') displayTxt = 'DP-IN / USB-C Loop Architecture';
           li.innerHTML = `<strong>${labels[key]}</strong> <span class="manifest-val">${displayTxt}</span>`;
         }
 
